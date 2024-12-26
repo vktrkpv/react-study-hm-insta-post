@@ -5,8 +5,10 @@ import './App.css';
 function App() {
 
   const [picture, setPhoto] = useState(0);
-  const {id, photo, commentOne, commentTwo, commentThree, commentFour} = data[picture];
+  const [arrayPictures, setArrayPictures] = useState(data);
+  const {photo, comments} = arrayPictures[picture];
 
+  console.log();
 
   const previousPicture = () => {
     setPhoto((picture => {
@@ -28,6 +30,28 @@ function App() {
     }))
   }
 
+  const removeComment = (id) => {
+    setArrayPictures((prevArrayPictures) => 
+      prevArrayPictures.map((pictureObj, index) => 
+        index === picture 
+    ? {
+      ...pictureObj, 
+      comments: pictureObj.comments.filter((comment) => comment.id !== id )
+    } 
+    : pictureObj
+        ));
+  }
+
+  const deleteAllComments = () => {
+    setArrayPictures((prevArrayPictures) => 
+      prevArrayPictures.map((pictureObj, index) =>
+        index === picture ? {...pictureObj, comments: [] } : pictureObj
+      )
+    ) ;
+  };
+
+ 
+
   return(
     <div>
       <div className='container'>
@@ -40,34 +64,22 @@ function App() {
           <img src={photo} alt='bedroomPhoto' width="400px"/>
         </div>
 
-        <div className='comments-container' key={id}>
-       
-          <div className='comment-box'>
-            <p>{commentOne}</p>
-            <button className='comm-btn'><i className="fa fa-trash-o"></i></button>
-          </div>
+        <div className='comments-container'>
 
-          <div className='comment-box'>
-          <p>{commentTwo}</p>
-          <button className='comm-btn'><i className="fa fa-trash-o"></i></button>
-
-          </div>
-
-          <div className='comment-box'>
-          <p>{commentThree}</p>
-          <button className='comm-btn'><i className="fa fa-trash-o"></i></button>
-
-          </div>
-
-          <div className='comment-box'>
-          <p>{commentFour}</p>
-          <button className='comm-btn'><i className="fa fa-trash-o"></i></button>
-          </div>
+          {comments.map(({text, id}) => (
+            <div key={id} className='comment-box'>
+              <p>{text}</p>
+              <button onClick={() => removeComment(id)} className='comm-btn'><i className="fa fa-trash-o"></i></button>
+            </div>
+          ))
+          }
 
           <div>
-          <button onClick={() => setPhoto([])} className='arr-btn detele-btn'>
+            {comments.length > 0 && (
+          <button onClick={deleteAllComments} className='arr-btn detele-btn'>
             Delete All Comments
           </button>
+          )}
         </div>
 
         </div>
